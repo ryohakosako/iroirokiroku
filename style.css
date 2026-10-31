@@ -1,0 +1,469 @@
+:root {
+    color-scheme: dark;
+
+    --bg: #15171c;
+    --panel: #20232b;
+    --text: #edf0f5;
+    --muted: #a0a7b4;
+    --line: #343945;
+    --accent: #79a6ff;
+    --green: #48bd8c;
+    --shadow: 0 8px 28px #0003;
+}
+
+/* 共通設定 */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+/* ボタン */
+
+button {
+    cursor: pointer;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: #303746;
+    color: #c4d6ff;
+    font-weight: 650;
+}
+
+button.primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+button.dark {
+    background: #252b35;
+    color: #fff;
+}
+
+button.danger {
+    background: #422b32;
+    color: #ff9da8;
+}
+
+button.small {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+/* メインレイアウト */
+
+main {
+    max-width: 1180px;
+    margin: 26px auto;
+    padding: 0 20px 50px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 16px;
+}
+
+/* 見出し */
+
+h2 {
+    font-size: 17px;
+    margin: 0;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* 統計 */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat,
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 17px;
+    box-shadow: var(--shadow);
+}
+
+.stat .label {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.stat .value {
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -.8px;
+    margin-top: 5px;
+}
+
+.stat .sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+/* パネル */
+
+.panel {
+    margin-bottom: 16px;
+}
+
+.panelhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+/* カレンダー */
+
+.monthnav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.monthnav button {
+    padding: 5px 10px;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.weekday {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 5px;
+}
+
+.day {
+    border: 1px solid var(--line);
+    background: #252a34;
+    border-radius: 9px;
+    min-height: 68px;
+    padding: 7px;
+    text-align: left;
+    color: var(--text);
+    position: relative;
+}
+
+.day.out {
+    opacity: .35;
+}
+
+.day.today {
+    border: 2px solid var(--accent);
+}
+
+.day.selected {
+    background: #293852;
+    border-color: var(--accent);
+}
+
+.day .num {
+    font-size: 12px;
+}
+
+.dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin: 5px 2px 0 0;
+    background: var(--accent);
+}
+
+/* 活動項目 */
+
+.activity-list {
+    display: grid;
+    gap: 9px;
+}
+
+.activity {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 12px;
+    background: #292e38;
+    border-radius: 11px;
+    gap: 8px;
+}
+
+.activity-name {
+    font-weight: 700;
+}
+
+.activity-total {
+    font-weight: 800;
+    font-size: 17px;
+}
+
+.activity small {
+    color: var(--muted);
+}
+
+/* 記録一覧 */
+
+.records {
+    display: grid;
+    gap: 8px;
+}
+
+.record {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.record:last-child {
+    border: 0;
+}
+
+.record-title {
+    font-weight: 700;
+}
+
+.record-meta {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.record-right {
+    text-align: right;
+    white-space: nowrap;
+    font-weight: 750;
+}
+
+.pill {
+    font-size: 11px;
+    border-radius: 99px;
+    padding: 3px 8px;
+    background: #303b50;
+    color: #b9d0ff;
+    margin-left: 5px;
+}
+
+.empty {
+    padding: 22px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* モーダル */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #11182770;
+    z-index: 10;
+    padding: 18px;
+    overflow: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.dialog {
+    width: min(520px, 100%);
+    background: #20232b;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 21px;
+    box-shadow: 0 20px 70px #0003;
+}
+
+.dialog h2 {
+    margin-bottom: 16px;
+}
+
+/* フォーム */
+
+.formgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.field {
+    display: grid;
+    gap: 5px;
+}
+
+.field.full {
+    grid-column: 1/-1;
+}
+
+.field label {
+    font-size: 13px;
+    color: #b7bfcc;
+    font-weight: 650;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px 11px;
+    border: 1px solid #454c5b;
+    border-radius: 9px;
+    background: #252a34;
+    color: var(--text);
+}
+
+input[type="color"] {
+    width: 56px;
+    height: 42px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+/* ダイアログ操作 */
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+/* 給与プレビュー */
+
+.resultbox {
+    background: #292f3b;
+    border-radius: 12px;
+    padding: 13px;
+    margin-top: 12px;
+}
+
+.resultrow {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 13px;
+    margin: 3px 0;
+}
+
+.resultrow.total {
+    font-size: 17px;
+    font-weight: 800;
+    border-top: 1px solid #dce3ef;
+    padding-top: 8px;
+    margin-top: 8px;
+}
+
+/* タブ */
+
+.tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.tabs button.active {
+    background: #252b35;
+    color: white;
+}
+
+/* フッター */
+
+.footer-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+}
+
+/* レスポンシブ */
+
+@media (max-width: 800px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 0 12px 35px;
+        margin-top: 18px;
+    }
+
+    .stat {
+        padding: 13px;
+    }
+
+    .stat .value {
+        font-size: 22px;
+    }
+
+    .day {
+        min-height: 53px;
+        padding: 5px;
+    }
+
+    .formgrid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dialog {
+        padding: 17px;
+    }
+}
