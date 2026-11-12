@@ -1,0 +1,149 @@
+
+name: Deploy with Version
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate site and version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CURRENT_RUN_ID: ${{ github.run_id }}
+          CURRENT_RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import json
+          import shutil
+          import subprocess
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+
+          jst = ZoneInfo("Asia/Tokyo")
+
+          # 公開用フォルダにアプリをコピー
+          os.makedirs("_site", exist_ok=True)
+
+          for name in os.listdir("."):
+              if name in (".git", ".github", "_site"):
+                  continue
+
+              src = name
+              dst = os.path.join("_site", name)
+
+              if os.path.isdir(src):
+                  shutil.copytree(src, dst)
+              else:
+                  shutil.copy2(src, dst)
+
+          # GitHub Actionsの実行履歴を取得
+          repo = os.environ["GITHUB_REPOSITORY"]
+          endpoint = (
+              f"repos/{repo}/actions/workflows/"
+              "deploy.yml/runs"
+              "?event=push&branch=main&per_page=100"
+          )
+
+          output = subprocess.check_output(
+              [
+                  "gh", "api", "--paginate",
+                  "--jq",
+                  '.workflow_runs[] | '
+                  '[.id, .created_at, .run_number] | @tsv',
+                  endpoint
+              ],
+              text=True
+          )
+
+          runs = []
+          for line in output.splitlines():
+              run_id, created_at, run_number = line.split("\t")
+              created = datetime.fromisoformat(
+                  created_at.replace("Z", "+00:00")
+              ).astimezone(jst)
+
+              runs.append({
+                  "id": int(run_id),
+                  "created": created,
+                  "number": int(run_number)
+              })
+
+          current_id = int(os.environ["CURRENT_RUN_ID"])
+          current_number = int(
+              os.environ["CURRENT_RUN_NUMBER"]
+          )
+
+          current = next(
+              (r for r in runs if r["id"] == current_id),
+              None
+          )
+
+          if current is None:
+              raise RuntimeError("現在の実行履歴が見つかりません")
+
+          today = current["created"].date()
+
+          # 同じ日本時間の日付の実行回数を数える
+          count = sum(
+              1 for r in runs
+              if r["created"].date() == today
+              and r["number"] <= current_number
+          )
+
+          date_text = today.strftime("%y.%m.%d")
+          version = f"v{date_text}.{count}"
+
+          data = {
+              "version": version,
+              "updated": today.strftime("%Y/%m/%d"),
+              "commit": os.environ["GITHUB_SHA"][:7]
+          }
+
+          with open(
+              "_site/version.json",
+              "w",
+              encoding="utf-8"
+          ) as f:
+              json.dump(
+                  data, f,
+                  ensure_ascii=False,
+                  indent=2
+              )
+
+          print("Generated version:", version)
+          PY
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
