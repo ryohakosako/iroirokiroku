@@ -96,6 +96,7 @@ for run in runs:
     entries.append({
         'version': f'v{date_key}.{counts[date_key]}',
         'updated': created.strftime('%Y/%m/%d'),
+        'updatedAt': created.isoformat(timespec='seconds'),
         'message': message,
         'commit': (run.get('head_sha') or '')[:7],
         'commitUrl': f'https://github.com/{repo}/commit/{run["head_sha"]}',
@@ -107,6 +108,6 @@ if current is None:
     raise RuntimeError('現在のプッシュ実行が履歴から見つかりません。mainへのpushで実行してください。')
 
 # 出力JSONはWebサイトに公開される。トークンや秘密情報を入れない。
-(OUT / 'version.json').write_text(json.dumps({k: current[k] for k in ('version', 'updated', 'commit')}, ensure_ascii=False, indent=2), encoding='utf-8')
+(OUT / 'version.json').write_text(json.dumps({k: current[k] for k in ('version', 'updated', 'updatedAt', 'commit')}, ensure_ascii=False, indent=2), encoding='utf-8')
 (OUT / 'changelog.json').write_text(json.dumps(list(reversed(entries)), ensure_ascii=False, indent=2), encoding='utf-8')
 print('Version:', current['version'], 'History:', len(entries))
