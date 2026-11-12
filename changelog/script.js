@@ -1,3 +1,21 @@
+async function loadAppName() {
+  try {
+    const response = await fetch('../app-info.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const info = await response.json();
+    if (typeof info.name !== 'string' || !info.name.trim()) throw new Error('アプリ名が不正です');
+    document.title = `更新履歴 | ${info.name}`;
+    const heading = document.querySelector('#app-name');
+    heading.replaceChildren(document.createTextNode(info.name + ' '));
+    const span = document.createElement('span');
+    span.textContent = '更新履歴';
+    heading.append(span);
+  } catch (error) {
+    console.warn('アプリ名を取得できませんでした', error);
+  }
+}
+loadAppName();
+
 const entriesEl = document.querySelector('#entries');
 const summaryEl = document.querySelector('#summary');
 

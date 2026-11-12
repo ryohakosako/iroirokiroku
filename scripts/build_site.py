@@ -1,4 +1,5 @@
 import json
+from html.parser import HTMLParser
 import os
 import shutil
 import urllib.request
@@ -21,6 +22,39 @@ for item in ROOT.iterdir():
         shutil.copytree(item, dest, ignore=shutil.ignore_patterns('__pycache__'))
     elif item.is_file():
         shutil.copy2(item, dest)
+
+class TitleParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.in_title = False
+        self.parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() == 'title':
+            self.in_title = True
+
+    def handle_endtag(self, tag):
+        if tag.lower() == 'title':
+            self.in_title = False
+
+    def handle_data(self, data):
+        if self.in_title:
+            self.parts.append(data)
+
+
+# アプリ名はルートのindex.htmlの<title>から取得する。
+source_index = ROOT / 'index.html'
+if not source_index.is_file():
+    raise RuntimeError('ルートにindex.htmlが必要です')
+parser = TitleParser()
+parser.feed(source_index.read_text(encoding='utf-8-sig'))
+app_name = ' '.join(''.join(parser.parts).split())
+if not app_name:
+    raise RuntimeError('index.htmlに<title>アプリ名</title>を設定してください')
+(OUT / 'app-info.json').write_text(
+    json.dumps({'name': app_name}, ensure_ascii=False, indent=2),
+    encoding='utf-8'
+)
 
 repo = os.environ['GITHUB_REPOSITORY']
 token = os.environ['GITHUB_TOKEN']
